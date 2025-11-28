@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <input type="password" id="password" name="password" required>
 
       <button type="submit" class="btn-submit">Login</button>
-      <p class="signup-link">Don’t have an account? <a href="signup.html">Sign up here</a></p>
+      <p class="signup-link">Don’t have an account? <a href="signup.php">Sign up here</a></p>
     </form>
   </div>
 
@@ -68,3 +68,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </footer>
 </body>
 </html>
+
