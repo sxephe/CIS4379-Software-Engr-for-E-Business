@@ -2,6 +2,8 @@
 include 'db_connect.php';
 session_start();
 
+$error='';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -20,34 +22,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: menu.php");
             exit();
         } else {
-            $error = "Invalid password.";
+            $error = "Invalid Password";
         }
     } else {
-        $error = "No account found with that email.";
+        $error = "User Not Found";
     }
 }
 ?>
-
+    
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAMUCT | Login </title>
+  <link rel="stylesheet" href="loginstyle.css">
 </head>
+
 <body>
-    <h2>Login</h2>
+  <header>
+    <img src="Logo-Dark.svg" alt="TAMUCT Logo" />
+  </header>
 
-    <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
+  <div class="login-container">
+    <form action="" method="POST">
+      <h2>Login</h2>
+      
+      <?php if ($error): ?>
+      <p class="error"><?php echo $error; ?></p>
+      <?php endif; ?>
 
-    <form method="POST">
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br><br>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
 
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
 
-        <button type="submit">Login</button>
+      <button type="submit" class="btn-submit">Login</button>
+      <p class="signup-link">Don’t have an account? <a href="signup.html">Sign up here</a></p>
     </form>
+  </div>
 
-    <p>Don’t have an account? <a href="signup.php">Create one here</a></p>
+  <footer>
+    <p>&copy; 2025 TAMUCT Online Food Ordering. All Rights Reserved.</p>
+  </footer>
 </body>
 </html>
