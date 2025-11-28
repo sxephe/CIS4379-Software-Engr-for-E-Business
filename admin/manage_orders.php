@@ -58,7 +58,11 @@ if (!$result) {
             <td><?php echo $row['order_date']; ?></td>
             <td>
                 <a href="view_order.php?order_id=<?php echo $row['order_id']; ?>">View</a> |
-                <a href="update_order_status.php?order_id=<?php echo $row['order_id']; ?>">Update</a>
+                <a href="update_order_status.php?order_id=<?php echo $row['order_id']; ?>">Update</a> |
+                <a href="delete_order.php?order_id=<?php echo $row['order_id']; ?>"
+                   onclick="return confirm('Are you sure you want to delete this order?');">
+                   Delete
+                </a>
             </td>
         </tr>
         <?php endwhile; ?>
