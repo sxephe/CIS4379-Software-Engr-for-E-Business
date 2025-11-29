@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <nav class="main-nav">
     <a href="menu.php">MENU</a>
     <a href="order.php">ORDER</a>
-    <a href="cart.php">CHECKOUT</a>
+    <a href="checkout.php">CHECKOUT</a>
     <a href="contact.php">CONTACT</a>
 
     <?php if (isset($_SESSION['name'])): ?>
@@ -16,4 +16,5 @@ if (session_status() === PHP_SESSION_NONE) {
         <a href="signup.php">SIGN UP</a>
     <?php endif; ?>
 </nav>
+
 
