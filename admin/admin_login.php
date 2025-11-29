@@ -5,17 +5,17 @@ include '../db_connect.php';
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    // Query admin table
-    $sql = "SELECT * FROM admins WHERE username = '$username'";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT * FROM admins WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($result->num_rows == 1) {
+    if ($result && $result->num_rows === 1) {
         $row = $result->fetch_assoc();
 
-        // Check password hash
         if (password_verify($password, $row['password'])) {
             $_SESSION['admin'] = $row['username'];
             header("Location: manage_orders.php");
@@ -28,27 +28,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="adminstyle.css">
 </head>
 <body>
+  <div class="admin-wrapper">
+    <div class="admin-card">
+      <h2>Admin Login</h2>
+      <p class="admin-subtitle">Sign in to manage orders and meals.</p>
 
-<h2>Admin Login</h2>
+      <?php if (!empty($message)): ?>
+        <p class="admin-message"><?php echo htmlspecialchars($message); ?></p>
+      <?php endif; ?>
 
-<form method="POST" action="">
-    <label>Username:</label>
-    <input type="text" name="username" required><br><br>
+      <form method="POST" class="admin-form" action="">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            autocomplete="username"
+          >
+        </div>
 
-    <label>Password:</label>
-    <input type="password" name="password" required><br><br>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            autocomplete="current-password"
+          >
+        </div>
 
-    <button type="submit">Login</button>
-</form>
-
-<p style="color:red;"><?php echo $message; ?></p>
-
+        <button type="submit" class="admin-btn">Login</button>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
