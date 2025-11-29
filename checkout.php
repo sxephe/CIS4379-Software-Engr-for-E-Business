@@ -22,13 +22,12 @@ if (isset($_POST['confirm_order'])) {
     // 1) Calculate total_amount
     $total_amount = 0;
     foreach ($_SESSION['cart'] as $item) {
-        // Your cart currently has: meal, pickup, price [attached_file:44]
-        // If you later add quantity, multiply price * quantity here.
-        $total_amount += $item['price'];
+        $qty = isset($item['quantity']) ? (int)$item['quantity'] : 1;
+        $total_amount += $item['price'] * $qty;
     }
 
     // 2) Insert into orders table
-    $user_id = $_SESSION['user_id'];
+    $user_id   = $_SESSION['user_id'];
     $order_date = date('Y-m-d H:i:s');
 
     $stmt = $conn->prepare("
@@ -41,20 +40,16 @@ if (isset($_POST['confirm_order'])) {
     // Get new order_id
     $order_id = $conn->insert_id;
 
-    // 3) Insert each cart item into order_items
+    // 3) Insert each cart item into order_items (REAL meal_id now)
     $stmt_item = $conn->prepare("
         INSERT INTO order_items (order_id, meal_id, quantity, price)
         VALUES (?, ?, ?, ?)
     ");
 
     foreach ($_SESSION['cart'] as $item) {
-        // For now, there is no meal_id or quantity in your cart,
-        // only meal name and price. [attached_file:44]
-        // To fully use order_items, you need to store meal_id (from meals table)
-        // and quantity in the cart. For now, use quantity = 1 and meal_id = 0 as placeholder.
-        $meal_id = 0;          // TODO: replace with real meal_id once you connect to meals table
-        $quantity = 1;
-        $price = $item['price'];
+        $meal_id  = (int)$item['meal_id'];
+        $quantity = isset($item['quantity']) ? (int)$item['quantity'] : 1;
+        $price    = $item['price'];
 
         $stmt_item->bind_param("iiid", $order_id, $meal_id, $quantity, $price);
         $stmt_item->execute();
@@ -84,10 +79,14 @@ $total = 0;
         <th>Pickup Time</th>
     </tr>
     <?php foreach ($_SESSION['cart'] as $item): ?>
-        <?php $total += $item['price']; ?>
+        <?php
+            $qty = isset($item['quantity']) ? (int)$item['quantity'] : 1;
+            $line_total = $item['price'] * $qty;
+            $total += $line_total;
+        ?>
         <tr>
-            <td><?php echo htmlspecialchars($item['meal']); ?></td>
-            <td>$<?php echo number_format($item['price'], 2); ?></td>
+            <td><?php echo htmlspecialchars($item['meal_name']); ?></td>
+            <td>$<?php echo number_format($line_total, 2); ?></td>
             <td><?php echo htmlspecialchars($item['pickup']); ?></td>
         </tr>
     <?php endforeach; ?>
